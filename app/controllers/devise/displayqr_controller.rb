@@ -16,14 +16,14 @@ class Devise::DisplayqrController < DeviseController
   end
 
   def update
-    if resource.gauth_tmp != params[resource_name]['tmpid'] || !resource.validate_token(params[resource_name]['gauth_token'].to_i)
+    if resource.gauth_tmp != params[resource_name]['tmpid'] || !resource.validate_token(params[resource_name]['gauth_token'])
       set_flash_message(:error, :invalid_token)
       render :show and return
     end
 
     if resource.set_gauth_enabled(params[resource_name]['gauth_enabled'])
       set_flash_message :notice, (resource.gauth_enabled? ? :enabled : :disabled)
-      sign_in scope, resource, :bypass => true
+      sign_in scope, resource, bypass_sign_in: true
       if params[resource_name]['invalidate_session'] == '1'
         sign_out resource
         redirect_to new_user_session_path
@@ -37,14 +37,14 @@ class Devise::DisplayqrController < DeviseController
   end
 
   def refresh
-    unless resource.nil?
+    if resource.nil?
+      redirect_to :root
+    else
       resource.send(:assign_auth_secret)
       resource.save
       set_flash_message :notice, :newtoken
-      sign_in scope, resource, :bypass => true
+      sign_in scope, resource, bypass_sign_in: true
       redirect_to [resource_name, :displayqr]
-    else
-      redirect_to :root
     end
   end
 

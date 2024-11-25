@@ -3,16 +3,18 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'activerecord', '~> 6.1'
-  gem "sqlite3", "~> 1.3.5"
-  gem "bson_ext", "~> 1.3"
-  gem "capybara", "~> 1.1.0"
-  gem 'shoulda', '~> 2.11.3'
-  gem 'mocha', '~> 0.13.0'
-  gem 'factory_girl_rails', '~> 1.2'
+  gem 'activerecord', '~> 7.2'
+  gem "sqlite3", "~> 2.3"
+  gem "bson_ext", "~> 1.12"
+  gem "capybara", "~> 3.40"
+  gem 'shoulda', '~> 4.0'
+  gem 'mocha', '~> 2.5'
+  gem 'factory_girl_rails', '~> 4.9'
   gem 'nokogiri'
   gem 'timecop'
   gem 'railties'
   gem 'actionmailer'
+  gem 'ostruct'
+  gem 'observer'
   # gem 'debugger'
 end

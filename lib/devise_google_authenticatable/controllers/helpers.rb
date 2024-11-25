@@ -14,6 +14,14 @@ module DeviseGoogleAuthenticator
 
         return image_tag(url, alt: 'Google Authenticator QRCode')
       end
+
+      def otpauth_user(username, app, qualifier=nil)
+        "#{username}@#{app}#{qualifier}"
+      end
+
+      def username_from_email(email)
+        (/^(.*)@/).match(email)[1]
+      end
     end
   end
 end

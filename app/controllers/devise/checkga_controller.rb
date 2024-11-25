@@ -17,7 +17,7 @@ class Devise::CheckgaController < Devise::SessionsController
     resource = resource_class.find_by_gauth_tmp(params[resource_name]['tmpid'])
 
     if not resource.nil?
-      if resource.validate_token(params[resource_name]['gauth_token'].to_i)
+      if resource.validate_token(params[resource_name]['gauth_token'])
         set_flash_message(:notice, :signed_in) if is_navigational_format?
         resource.remember_me = resource.respond_to?(:remember_me) && session[:devise_remember_me] == '1'
         sign_in(resource_name, resource)
