@@ -53,3 +53,6 @@ test/rails_app/db/*.sqlite3
 Gemfile.lock
 .ruby-version
 .ruby-gemset
+
+# Ignore the entire .idea directory -- idea directory is created by JetBrains IDEs, including RubyMine, to store project-specific settings, configurations, and metadata.
+.idea/*

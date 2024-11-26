@@ -1,8 +1,8 @@
-require 'test_helper'
-require 'integration_tests_helper'
+require_relative '../test_helper'
+require_relative '../integration_tests_helper'
 
-class InvitationTest < ActionDispatch::IntegrationTest
-  self.use_transactional_fixtures = false
+class InvitationTest < ActionController::IntegrationTest
+  self.use_transactional_tests = false
 
   def teardown
     Capybara.reset_sessions!
@@ -80,6 +80,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     click_button 'Log in'
 
     assert_equal user_checkga_path, current_path
+    Capybara.reset_sessions!
 
   end
 
@@ -93,11 +94,8 @@ class InvitationTest < ActionDispatch::IntegrationTest
   end
 
   test 'successfull token authentication' do
+    create_and_signin_gauth_user
     testuser = User.find_by_email("fulluser@test.com")
-    visit new_user_session_path
-    fill_in 'user_email', :with => 'fulluser@test.com'
-    fill_in 'user_password', :with => "123456"
-    click_button "Log in"
     fill_in 'user_gauth_token', :with => ROTP::TOTP.new(testuser.get_qr).at(Time.now)
     click_button 'Check Token'
 
@@ -131,12 +129,9 @@ class InvitationTest < ActionDispatch::IntegrationTest
     old_ga_timedrift = User.ga_timedrift
     User.ga_timedrift = 1
 
-    # testuser = create_and_signin_gauth_user
+    create_and_signin_gauth_user
+
     testuser = User.find_by_email("fulluser@test.com")
-    visit new_user_session_path
-    fill_in 'user_email', :with => 'fulluser@test.com'
-    fill_in 'user_password', :with => "123456"
-    click_button "Log in"
     fill_in 'user_gauth_token', :with => ROTP::TOTP.new(testuser.get_qr).at(Time.now.in(60))
     click_button 'Check Token'
 
@@ -147,20 +142,20 @@ class InvitationTest < ActionDispatch::IntegrationTest
   end
 
   test 'user is not prompted for token again after first login until remembertime is up' do
-    # testuser = create_and_signin_gauth_user
+    create_and_signin_gauth_user
+
     testuser = User.find_by_email("fulluser@test.com")
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
     fill_in 'user_password', :with => "123456"
     click_button "Log in"
+    check 'user_remember_gauth_token'
     fill_in 'user_gauth_token', :with => ROTP::TOTP.new(testuser.get_qr).at(Time.now)
     click_button 'Check Token'
 
     assert_equal root_path, current_path
 
     visit destroy_user_session_path
-    # sign_in_as_user(testuser)
-    testuser = User.find_by_email("fulluser@test.com")
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
     fill_in 'user_password', :with => "123456"
@@ -169,8 +164,7 @@ class InvitationTest < ActionDispatch::IntegrationTest
     visit destroy_user_session_path
 
     Timecop.travel(1.month.to_i + 1.day.to_i)
-    # sign_in_as_user(testuser)
-    testuser = User.find_by_email("fulluser@test.com")
+    User.find_by_email("fulluser@test.com")
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'
     fill_in 'user_password', :with => "123456"

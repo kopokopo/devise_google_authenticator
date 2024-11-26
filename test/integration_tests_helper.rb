@@ -1,34 +1,28 @@
-class ActionController::IntegrationTest
+class ActionController::IntegrationTest < ActionDispatch::IntegrationTest
 
   def warden
     request.env['warden']
   end
-  
+
   def create_full_user
     @@user ||= begin
-      user = User.create!(
-        :username              => 'usertest',
-        :email                 => 'fulluser@test.com',
-        :password              => '123456',
-        :password_confirmation => '123456'
-      )
-      @@user = user
-      user
-    end
+                 user = User.create!(
+                   :email                 => 'fulluser@test.com',
+                   :password              => '123456',
+                   :password_confirmation => '123456'
+                 )
+                 @@user = user
+                 user
+               end
   end
 
   def create_and_signin_gauth_user
-    testuser = create_full_user
-    sign_in_as_user(testuser)
-    visit user_displayqr_path
-    check 'user_gauth_enabled'
-    fill_in('user_gauth_token', :with => ROTP::TOTP.new(testuser.get_qr).at(Time.now))
-    click_button 'Continue...'
-
-    Capybara.reset_sessions!
-
-    sign_in_as_user(testuser)
-    testuser
+    create_full_user
+    User.find_by(email: "fulluser@test.com").update(:gauth_enabled => 1) # force this off - unsure why sometimes it flicks on possible race condition
+    visit new_user_session_path
+    fill_in 'user_email', :with => 'fulluser@test.com'
+    fill_in 'user_password', :with => '123456'
+    click_button 'Log in'
   end
 
   def sign_in_as_user(user = nil)

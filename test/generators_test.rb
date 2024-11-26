@@ -4,7 +4,7 @@ require 'rails/generators'
 require 'generators/devise_google_authenticator/devise_google_authenticator_generator'
 
 class GeneratorsTest < ActiveSupport::TestCase
-  RAILS_APP_PATH = File.expand_path("../rails_app", __FILE__)
+  RAILS_APP_PATH = File.expand_path("../rails_app", __FILE__).gsub(" ", "\\ ")
 
   test "rails g should include the 3 generators" do
     @output = `cd #{RAILS_APP_PATH} && rails g`
