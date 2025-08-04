@@ -71,7 +71,9 @@ class Devise::DisplayqrController < DeviseController
   def dynamic_layout
     if resource.is_a?(User)
       'application'
-    elsif resource.is_a?(SaasAdmin)
+    elsif defined?(Administrator) && resource.is_a?(Administrator)
+      'application'
+    elsif defined?(SaasAdmin) && resource.is_a?(SaasAdmin)
       'k2admin'
     end
   end
