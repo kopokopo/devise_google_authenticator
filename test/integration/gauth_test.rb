@@ -107,7 +107,7 @@ class InvitationTest < ActionController::IntegrationTest
     old_ga_timeout = User.ga_timeout
     User.ga_timeout = 1.second
 
-    # testuser = create_and_signin_gauth_user
+    testuser = create_and_signin_gauth_user
     testuser = User.find_by_email("fulluser@test.com")
     visit new_user_session_path
     fill_in 'user_email', :with => 'fulluser@test.com'

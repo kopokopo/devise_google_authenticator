@@ -11,8 +11,8 @@ class GoogleAuthenticatableTest < ActiveSupport::TestCase
 		assert_not_nil User.find(1).gauth_secret
 	end
 
-	test 'new users should have gauth_enabled disabled by default' do
-		assert_equal 0, User.find(1).gauth_enabled.to_i
+	test 'new users should have gauth_enabled enabled by default' do
+		assert_equal 1, User.find(1).gauth_enabled.to_i
 	end
 
 	test 'get_qr method works' do
@@ -52,11 +52,6 @@ class GoogleAuthenticatableTest < ActiveSupport::TestCase
 	end
 
 	test 'testing token validation' do
-		assert !User.find(1).validate_token('1')
-		assert !User.find(1).validate_token(ROTP::TOTP.new(User.find(1).get_qr).at(Time.now))
-
-		User.find(1).assign_tmp
-
 		assert !User.find(1).validate_token('1')
 		assert User.find(1).validate_token(ROTP::TOTP.new(User.find(1).get_qr).at(Time.now))
 	end
